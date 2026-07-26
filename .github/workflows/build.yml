@@ -1,0 +1,54 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    name: Linux (gcc)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OpenGL, GLUT and X11 headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            freeglut3-dev libglu1-mesa-dev libgl1-mesa-dev \
+            libxmu-dev libxi-dev libxext-dev libsm-dev libice-dev
+
+      - name: Configure
+        run: ./configure
+
+      - name: Build
+        shell: bash
+        run: |
+          make apps 2>&1 | tee build.log
+
+      - name: Fail on compiler warnings
+        shell: bash
+        run: |
+          if grep -q 'warning:' build.log; then
+            echo "::error::the build produced compiler warnings"
+            grep 'warning:' build.log
+            exit 1
+          fi
+          echo "no warnings"
+
+      - name: Check that both binaries were produced
+        run: |
+          test -x ragingrobots/Linux/ragingrobots
+          test -x rwserver/Linux/rwserver
+
+      - name: Smoke test the server
+        shell: bash
+        run: |
+          rwserver/Linux/rwserver &
+          server=$!
+          # the server has to come up and accept a connection on its port
+          timeout 10 bash -c 'until (exec 3<>/dev/tcp/127.0.0.1/7986) 2>/dev/null; do sleep 0.2; done'
+          echo "server is listening and accepted a connection"
+          kill "$server"
