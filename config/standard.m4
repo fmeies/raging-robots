@@ -117,7 +117,9 @@ if test x${$1_HOME} != x; then
       MISSES="$MISSES+"
     fi
   done
-  if test x+++ = x$MISSES; then
+dnl one + per extension that was not found; only all of them missing counts
+dnl as "no library here"
+  if test x++++ = x$MISSES; then
     $1_HOME=""
   fi
 fi

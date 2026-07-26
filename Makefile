@@ -39,6 +39,6 @@ dist:
 
 
 apps:
-	for DIR in $(APP_DIRS); do $(MAKE) -C $$DIR; done
+	for DIR in $(APP_DIRS); do $(MAKE) -C $$DIR || exit 1; done
 
 include $(RAGINGROBOTS_HOME)/rules/subdirs.mk

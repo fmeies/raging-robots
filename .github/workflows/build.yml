@@ -20,8 +20,26 @@ jobs:
             freeglut3-dev libglu1-mesa-dev libgl1-mesa-dev \
             libxmu-dev libxi-dev libxext-dev libsm-dev libice-dev
 
+      - name: Assemble a prefix in the layout configure expects
+        run: |
+          # config/standard.m4 looks for <prefix>/include/GL/gl.h next to
+          # <prefix>/lib/libGL.so. Debian moved libraries to multiarch
+          # directories long after this build system was written, so point it
+          # at a small tree of symlinks instead of teaching it the new layout.
+          arch=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+          mkdir -p /tmp/glprefix/include /tmp/glprefix/lib
+          ln -s /usr/include/GL /tmp/glprefix/include/GL
+          for lib in libGL libGLU libglut; do
+            ln -s "/usr/lib/$arch/$lib.so" "/tmp/glprefix/lib/$lib.so"
+          done
+          ls -l /tmp/glprefix/lib
+
       - name: Configure
-        run: ./configure
+        run: |
+          ./configure \
+            --with-opengl=/tmp/glprefix \
+            --with-glu=/tmp/glprefix \
+            --with-glut=/tmp/glprefix
 
       - name: Build
         shell: bash
