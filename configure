@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# use uname to find the system type if none was set
+if test x$SYSTEM = x; then
+    SYSTEM=`uname`
+fi
+
+# create a directory for the configuration
+if [ -d config-$SYSTEM ]; then :; else
+    mkdir config-$SYSTEM
+fi
+
+# mark the directory as system-specific
+cd config-$SYSTEM
+touch .system
+
+if ln -sf ../config/* . 2>/dev/null; then :; else
+    ln -f ../config/* . 2>/dev/null
+fi
+./configure $*

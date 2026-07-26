@@ -1,0 +1,7 @@
+CXXFILES = $(wildcard *.cpp)
+ADD_CXXFLAGS =-DDATA_DIR_PREFIX=\"$(PREFIX)\"
+NAME = ragingrobots
+NEEDS = GLUT OPENGL GLU
+
+RAGINGROBOTS_HOME = ..
+include $(RAGINGROBOTS_HOME)/rules/app.mk

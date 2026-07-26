@@ -1,0 +1,75 @@
+AC_INIT
+
+builtin(include,standard.m4)
+
+echo "This is a `uname` system"
+
+AC_ISC_POSIX
+
+
+AC_PROG_CXX
+AC_CHECK_CC_M($CXX,cpp,-M,CXX_HAS_M)
+AC_SUBST(CXX_HAS_M)
+AC_CHECK_EXCEPTIONS
+if test $HAVE_EXCEPTIONS != YES; then
+    CXX_COMPAT_FLAGS="$CXX_COMPAT_FLAGS -DNO_EXCEPTIONS"
+fi
+if test x$GXX = xyes; then
+  AC_CHECK_GLD($CXX, GXX_USES_GLD)
+  GXX=YES
+else
+  GXX=NO
+fi
+
+
+AC_SUBST(CXX_COMPAT_FLAGS)
+AC_CHECK_PROG(MAKEDEPEND,makedepend,makedepend,)
+AC_SUBST(MAKEDEPEND)
+
+AC_PROG_LN_S
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+
+# if your system is not supported, write the small config-entry and
+# add your host to this list
+UNAME=`uname`
+
+AC_MSG_CHECKING(for a machine description)
+CONFIG_MACHINE=""
+if test -f ../machine/$UNAME; then
+    CONFIG_MACHINE="include \$(RAGINGROBOTS_HOME)/machine/$UNAME"
+    AC_MSG_RESULT(yes)
+else
+    AC_MSG_RESULT(no)
+fi
+
+
+
+CONFIG_CXX=""
+if test x${GXX} = xYES; then
+    CONFIG_CXX="include \$(RAGINGROBOTS_HOME)/machine/GNU-C++"
+fi
+AC_SUBST(CONFIG_CXX)
+
+AC_SUBST(CONFIG_MACHINE)
+
+
+AC_FIND_X11
+
+AC_NET_FROM_X11
+AC_CHECK_NET
+
+
+
+
+
+AC_FIND_LIB(MESA,mesa,GL/gl,MesaGL,[$X11_HOME], [        ])
+AC_FIND_LIB(OPENGL,opengl,GL/gl,GL,[/usr/X11], [        ])
+AC_FIND_LIB(GLU,glu,GL/glu,GLU,[/usr], [         ])
+AC_FIND_LIB(PLIB,plib,plib/sl,plibsl,[/usr], [        ])
+AC_FIND_LIB(GLUT,glut,GL/glut,GL,[/usr/X11], [         ])
+
+
+cp template.dat config.dat.in
+AC_OUTPUT(config.dat)
+rm config.dat.in

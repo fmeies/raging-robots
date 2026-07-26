@@ -1,0 +1,49 @@
+RagingRobots - 3D Multiplayer Game
+
+(c) 2000 by Frank Meies
+
+----
+
+RagingRobots requires an implementation of OpenGL (Mesa) and for sound support
+(optional) the game library plib.
+
+First you have to start the server, then you can join the game with
+up to three clients (increase MAXPLAYERS in sources to get more possible
+clients).
+
+Hint: Reduce window size if performance is poor.
+
+Control Keys:
+Moving: Cursor keys
+Sliding: Y, X for sliding left/right
+Fire: Ctrl
+
+The "rooms.data" file can be modified to create new scenes. The syntax is
+quite simple:
+
+total number of rooms
+center of first room x-coordinate
+center of first room z-coordinate
+number of neighbor rooms
+index of first neighbor
+direction of first neighbor (0 = North, 1 = South, 2 = West, 3 = East)
+index of second neighbor
+direction of second neighbor
+..
+center of second room x-coordinate
+center of second room z-coordinate
+number of neighbor rooms
+index of first neighbor
+direction of first neighbor (0 = North, 1 = South, 2 = West, 3 = East)
+index of second neighbor
+direction of second neighbor
+..
+..
+
+RagingRobots is free software. It may be distributed under the terms of the
+GNU GENERAL PUBLIC LICENSE. See the COPYING file for more information.
+
+If you find any bugs or inconveniences in RagingRobots, please contact me.
+email: <email removed>
+
+Have a nice day!

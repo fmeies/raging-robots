@@ -1,0 +1,6 @@
+CXX_SO_FLAGS = -fPIC
+CXX_SL_FLAGS = -shared -Wl,-soname,lib$(NAME).so.$(VERSION)
+
+# Warning flags for this compiler family. The sources build clean with -Wall
+# and also with -Wextra, should you want to tighten it further.
+CXX_WARN_FLAGS = -Wall
