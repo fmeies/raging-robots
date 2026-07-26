@@ -300,14 +300,17 @@ GLuint GameView::makeWall() {
 	glBegin(GL_QUADS);
 
 	// front
+	// s follows x and t follows y, one tile per two world units. Getting the
+	// two axes the wrong way round turns the texture by 90 degrees, and equal
+	// repeat counts on a wall that is 8 wide and 2 high stretch it fourfold.
 	glNormal3f(0, 0, -1);
 	glTexCoord2f(0, 0);
 	glVertex3f(-4.0, 0, 0.0);
-	glTexCoord2f(0, 3);
+	glTexCoord2f(4, 0);
 	glVertex3f(4.0, 0, 0.0);
-	glTexCoord2f(3, 3);
+	glTexCoord2f(4, 1);
 	glVertex3f(4.0, 2.0, 0.0);
-	glTexCoord2f(3, 0);
+	glTexCoord2f(0, 1);
 	glVertex3f(-4.0, 2.0, 0.0);
 
 	glEnd();
@@ -327,26 +330,29 @@ GLuint GameView::makeWallWithDoor() {
 
 	glBegin(GL_QUADS);
 
+	// Same mapping as the plain wall, and continuous across the doorway so the
+	// courses on both sides stay in line: s = (x + 4) / 2, t = y / 2.
+
 	// left
 	glNormal3f(0, 0, -1);
 	glTexCoord2f(0, 0);
 	glVertex3f(-4.0, 0, 0.0);
-	glTexCoord2f(0, 3);
+	glTexCoord2f(1.5, 0);
 	glVertex3f(-1.0, 0, 0.0);
-	glTexCoord2f(3, 3);
+	glTexCoord2f(1.5, 1);
 	glVertex3f(-1.0, 2.0, 0.0);
-	glTexCoord2f(3, 0);
+	glTexCoord2f(0, 1);
 	glVertex3f(-4.0, 2.0, 0.0);
 
 	// right
 	glNormal3f(0, 0, -1);
-	glTexCoord2f(0, 0);
+	glTexCoord2f(2.5, 0);
 	glVertex3f(1.0, 0, 0.0);
-	glTexCoord2f(0, 3);
+	glTexCoord2f(4, 0);
 	glVertex3f(4.0, 0.0, 0.0);
-	glTexCoord2f(3, 3);
+	glTexCoord2f(4, 1);
 	glVertex3f(4.0, 2.0, 0.0);
-	glTexCoord2f(3, 0);
+	glTexCoord2f(2.5, 1);
 	glVertex3f(1.0, 2.0, 0.0);
 
 	glEnd();

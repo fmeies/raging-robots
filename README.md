@@ -91,3 +91,8 @@ The socket handling on both sides — `rwserver/rwserver.cpp` and
 `ragingrobots/network.cpp` — started out as someone else's C example that I ported
 to C++ and built on. I can no longer identify where it came from. If you recognise
 it, I would be glad to give proper credit.
+
+The wall and ground textures are Bricks097 and Tiles141 from
+[ambientCG](https://ambientcg.com/), licensed CC0 1.0 Universal. They replace the
+photographic textures the game shipped with in 2000, whose origin I could no
+longer establish.
