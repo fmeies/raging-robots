@@ -29,7 +29,7 @@ install-bin: $(ADD_INSTALL) $(TARGET)
 
 install-data: $(ADD_INSTALL) $(TARGET)
 	if test -d ./data ; then \
-	mkdir $(PREFIX)/share/$(NAME); \
+	mkdir -p $(PREFIX)/share/$(NAME); \
 	cp ./data/* $(PREFIX)/share/$(NAME); \
 	fi
 
