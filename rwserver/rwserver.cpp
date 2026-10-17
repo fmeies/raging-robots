@@ -377,7 +377,8 @@ int main()
 {
 	Network n;
 
-	n.create(7986);
+	if (!n.create(7986))
+		return 1;
 
 	while(1)
 	{
