@@ -33,6 +33,14 @@ to be installed before it will start:
 This puts `ragingrobots` and `rwserver` into `$PREFIX/bin` (`/usr/local` by
 default) and the textures and scene data next to them.
 
+Built this way the game draws through X11, so on macOS it needs XQuartz. To
+get a native window instead, build against Apple's own OpenGL and GLUT
+frameworks. No Homebrew packages are needed then, but Apple has deprecated
+both frameworks and may drop them from a future macOS:
+
+    ./configure
+    make NATIVE_MACOS_GLUT=YES apps install
+
 First you have to start the server, then you can join the game with up to three
 clients (increase MAXPLAYERS in the sources to get more possible clients — it is
 defined twice, in `ragingrobots/gamemodel.h` and in `rwserver/rwserver.h`, and

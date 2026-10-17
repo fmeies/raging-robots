@@ -4,6 +4,21 @@ GLU_LIBS = -lGLU
 PLIB_LIBS = -lplibsl -lplibul
 GLUT_LIBS = -lglut
 
+# Apple's own OpenGL and GLUT frameworks open a native window, so a client
+# built against them runs without an X server. They stand in for GLUT, OPENGL
+# and GLU, and with those gone nothing pulls in X11 either. Apple has
+# deprecated both frameworks, hence the opt-in.
+ifeq ($(NATIVE_MACOS_GLUT),YES)
+ifneq ($(SYSTEM),Darwin)
+  $(error NATIVE_MACOS_GLUT=YES only works on macOS, not on $(SYSTEM))
+endif
+ifneq (,$(filter GLUT OPENGL GLU,$(NEEDS)))
+  NEEDS := $(filter-out GLUT OPENGL GLU,$(NEEDS))
+  EXTERNAL_FLAGS += -DNATIVE_MACOS_GLUT -DGL_SILENCE_DEPRECATION
+  EXTERNAL_LIBS += -framework OpenGL -framework GLUT
+endif
+endif
+
 ifeq ($(HAVE_OPENGL),NO)
   ifeq ($(HAVE_MESA),YES)
     override HAVE_OPENGL = $(HAVE_MESA)

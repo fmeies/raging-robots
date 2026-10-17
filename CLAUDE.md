@@ -50,7 +50,9 @@ no packing. Both ends must be built for the same ABI.
 Verification means building and running the real thing. A few things that are
 awkward and worth knowing before you rediscover them:
 
-- The client needs an X server; on macOS that is XQuartz.
+- The client needs an X server; on macOS that is XQuartz. A client built with
+  `NATIVE_MACOS_GLUT=YES` opens a native window instead, so none of the X
+  tricks below work on it.
 - There is no `xdotool`. Synthetic key events work through a small Xlib program
   using `XSendEvent`, and freeglut accepts them.
 - Neither ImageMagick nor netpbm is installed, so screenshots mean `xwd` plus a

@@ -19,9 +19,15 @@
 #include <fstream>
 #include <stdlib.h>
 #include <math.h>
+#ifdef NATIVE_MACOS_GLUT
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#endif
 
 // application specific includes
 #include "gameview.h"

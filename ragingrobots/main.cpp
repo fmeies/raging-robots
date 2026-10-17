@@ -14,7 +14,11 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifdef NATIVE_MACOS_GLUT
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
 #include <iostream>
 
 #include "gameview.h"

@@ -17,7 +17,11 @@
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#ifdef NATIVE_MACOS_GLUT
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
 
 // application specific includes
 #include "gamecontroller.h"

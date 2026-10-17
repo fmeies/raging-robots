@@ -70,3 +70,37 @@ jobs:
           timeout 10 bash -c 'until (exec 3<>/dev/tcp/127.0.0.1/7986) 2>/dev/null; do sleep 0.2; done'
           echo "server is listening and accepted a connection"
           kill "$server"
+
+  macos-native:
+    name: macOS (native OpenGL and GLUT frameworks)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure
+        run: ./configure
+
+      - name: Build
+        shell: bash
+        run: |
+          make NATIVE_MACOS_GLUT=YES apps 2>&1 | tee build.log
+
+      - name: Fail on compiler warnings
+        shell: bash
+        run: |
+          if grep -q 'warning:' build.log; then
+            echo "::error::the build produced compiler warnings"
+            grep 'warning:' build.log
+            exit 1
+          fi
+          echo "no warnings"
+
+      - name: Check that the client does not need X11
+        run: |
+          test -x rwserver/Darwin/rwserver
+          otool -L ragingrobots/Darwin/ragingrobots
+          if otool -L ragingrobots/Darwin/ragingrobots | grep -Eiq 'x11|glut\.[0-9]|libGL'; then
+            echo "::error::the native build still links X11, freeglut or Mesa"
+            exit 1
+          fi
