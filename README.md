@@ -9,17 +9,32 @@ merely kept alive: the sources are adjusted from time to time so that they still
 build and run on current systems. Nothing beyond that is planned — no new
 features, no rewrite. What you find here is the game as it was, still working.
 
-RagingRobots requires an implementation of OpenGL, plus GLU and GLUT. On macOS
-there are two ways to get them: Mesa and freeglut from Homebrew, which draw
-through X11 and need XQuartz, or Apple's own frameworks, which need nothing
-extra (see below).
+RagingRobots requires an implementation of OpenGL, plus GLU and GLUT.
 
-For the X11 build on macOS:
+## Building
+
+The game looks for its data files under `$PREFIX/share/ragingrobots`, so it has
+to be installed before it will start. Each build below ends with `make install`,
+which puts `ragingrobots` and `rwserver` into `$PREFIX/bin` (`/usr/local` by
+default) and the textures and scene data next to them. Pass `PREFIX=...` to
+`make` to install somewhere else.
+
+### macOS, native
+
+This builds against Apple's own OpenGL and GLUT frameworks, so the game opens a
+native window. Neither Homebrew packages nor XQuartz are needed, but Apple has
+deprecated both frameworks and may drop them from a future macOS.
+
+    CXXFLAGS="-O3" CFLAGS="-O3" ./configure
+    make NATIVE_MACOS_GLUT=YES apps install
+
+### macOS with X11
+
+This uses Mesa and freeglut from Homebrew, which draw through X11, so the game
+needs XQuartz to run.
 
     brew install mesa mesa-glu freeglut libxmu
     brew install --cask xquartz
-
-Then build both the game and the server:
 
     CXXFLAGS="-O3" CFLAGS="-O3" ./configure \
         --with-opengl=/opt/homebrew \
@@ -27,22 +42,34 @@ Then build both the game and the server:
         --with-glu=/opt/homebrew \
         --x-includes=/opt/homebrew/include \
         --x-libraries=/opt/homebrew/lib
+    make apps install
+
+### Linux
+
+On Debian and Ubuntu:
+
+    sudo apt-get install freeglut3-dev libglu1-mesa-dev libgl1-mesa-dev \
+        libxmu-dev libxi-dev libxext-dev libsm-dev libice-dev
+
+`configure` looks for each library's headers in `<prefix>/include` next to the
+library in `<prefix>/lib`. Debian keeps the libraries in a multiarch directory
+instead, so point `configure` at a small tree of symlinks:
+
+    arch=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+    mkdir -p ~/glprefix/include ~/glprefix/lib
+    ln -s /usr/include/GL ~/glprefix/include/GL
+    for lib in libGL libGLU libglut; do
+        ln -s /usr/lib/$arch/$lib.so ~/glprefix/lib/$lib.so
+    done
+
+    CXXFLAGS="-O3" CFLAGS="-O3" ./configure \
+        --with-opengl=$HOME/glprefix \
+        --with-glu=$HOME/glprefix \
+        --with-glut=$HOME/glprefix
     make apps
+    sudo make install
 
-The game looks for its data files under `$PREFIX/share/ragingrobots`, so it has
-to be installed before it will start:
-
-    make install
-
-This puts `ragingrobots` and `rwserver` into `$PREFIX/bin` (`/usr/local` by
-default) and the textures and scene data next to them.
-
-To get a native window instead, build against Apple's own OpenGL and GLUT
-frameworks. Neither Homebrew packages nor XQuartz are needed then, but Apple
-has deprecated both frameworks and may drop them from a future macOS:
-
-    CXXFLAGS="-O3" CFLAGS="-O3" ./configure
-    make NATIVE_MACOS_GLUT=YES apps install
+## Running
 
 First you have to start the server, then you can join the game with up to three
 clients (increase MAXPLAYERS in the sources to get more possible clients — it is
@@ -52,7 +79,8 @@ both have to agree):
     rwserver &
     ragingrobots [hostname]
 
-The server listens on port 7986. The client connects to localhost if no host is
+The server listens on port 7986. If the port is taken, it tries once more after
+ten seconds and then exits. The client connects to localhost if no host is
 given on the command line.
 
 Hint: Reduce window size if performance is poor.
