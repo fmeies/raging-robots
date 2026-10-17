@@ -9,11 +9,15 @@ merely kept alive: the sources are adjusted from time to time so that they still
 build and run on current systems. Nothing beyond that is planned — no new
 features, no rewrite. What you find here is the game as it was, still working.
 
-RagingRobots requires an implementation of OpenGL, plus GLU and GLUT.
+RagingRobots requires an implementation of OpenGL, plus GLU and GLUT. On macOS
+there are two ways to get them: Mesa and freeglut from Homebrew, which draw
+through X11 and need XQuartz, or Apple's own frameworks, which need nothing
+extra (see below).
 
-On macOS with Homebrew:
+For the X11 build on macOS:
 
-    brew install mesa mesa-glu freeglut
+    brew install mesa mesa-glu freeglut libxmu
+    brew install --cask xquartz
 
 Then build both the game and the server:
 
@@ -33,12 +37,11 @@ to be installed before it will start:
 This puts `ragingrobots` and `rwserver` into `$PREFIX/bin` (`/usr/local` by
 default) and the textures and scene data next to them.
 
-Built this way the game draws through X11, so on macOS it needs XQuartz. To
-get a native window instead, build against Apple's own OpenGL and GLUT
-frameworks. No Homebrew packages are needed then, but Apple has deprecated
-both frameworks and may drop them from a future macOS:
+To get a native window instead, build against Apple's own OpenGL and GLUT
+frameworks. Neither Homebrew packages nor XQuartz are needed then, but Apple
+has deprecated both frameworks and may drop them from a future macOS:
 
-    ./configure
+    CXXFLAGS="-O3" CFLAGS="-O3" ./configure
     make NATIVE_MACOS_GLUT=YES apps install
 
 First you have to start the server, then you can join the game with up to three
